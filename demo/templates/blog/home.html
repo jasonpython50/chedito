@@ -1,0 +1,150 @@
+{% extends 'base.html' %}
+{% load chedito_tags %}
+
+{% block title %}Home - Chedito Demo{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- Main Content -->
+    <div class="col-lg-8">
+        <!-- Hero Section -->
+        <div class="bg-light p-5 rounded-3 mb-4">
+            <h1 class="display-5 fw-bold">Welcome to Chedito Demo</h1>
+            <p class="lead">
+                This is a demo blog application showcasing the features of
+                <strong>Chedito</strong> - a modern rich text editor for Django.
+            </p>
+            <hr class="my-4">
+            <p>
+                Try creating a new post, editing content with the rich text editor,
+                uploading images, and exploring the admin interface.
+            </p>
+            <a class="btn btn-primary btn-lg" href="{% url 'blog:post_create' %}">
+                Create a Post
+            </a>
+            <a class="btn btn-outline-secondary btn-lg" href="{% url 'admin:index' %}">
+                Open Admin
+            </a>
+        </div>
+
+        <!-- Featured Posts -->
+        {% if featured_posts %}
+        <h2 class="mb-3">Featured Posts</h2>
+        <div class="row mb-4">
+            {% for post in featured_posts %}
+            <div class="col-md-4 mb-3">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <span class="badge bg-warning text-dark mb-2">Featured</span>
+                        <h5 class="card-title">{{ post.title }}</h5>
+                        <p class="card-text text-muted small">
+                            {{ post.excerpt|strip_tags|truncatewords:15 }}
+                        </p>
+                        <a href="{{ post.get_absolute_url }}" class="btn btn-sm btn-outline-primary">
+                            Read More
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Recent Posts -->
+        <h2 class="mb-3">Recent Posts</h2>
+        {% if posts %}
+            {% for post in posts %}
+            <article class="card mb-3">
+                <div class="card-body">
+                    <h3 class="card-title">
+                        <a href="{{ post.get_absolute_url }}" class="text-decoration-none">
+                            {{ post.title }}
+                        </a>
+                    </h3>
+                    <p class="text-muted small">
+                        {% if post.category %}
+                        <a href="{% url 'blog:category_posts' post.category.slug %}">
+                            {{ post.category.name }}
+                        </a> |
+                        {% endif %}
+                        {{ post.created|date:"F j, Y" }}
+                    </p>
+                    {% if post.excerpt %}
+                    <div class="card-text">
+                        {{ post.excerpt|truncate_richtext:150 }}
+                    </div>
+                    {% endif %}
+                    <a href="{{ post.get_absolute_url }}" class="btn btn-primary mt-2">
+                        Read More
+                    </a>
+                </div>
+            </article>
+            {% endfor %}
+        {% else %}
+            <div class="alert alert-info">
+                <p class="mb-0">No posts yet. <a href="{% url 'blog:post_create' %}">Create your first post!</a></p>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Sidebar -->
+    <div class="col-lg-4">
+        <div class="sidebar">
+            <!-- About -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">About Chedito</h5>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">
+                        Chedito is a modern rich text editor for Django, built on Quill.js.
+                        It provides full media support, drag & drop uploads, and seamless
+                        Django admin integration.
+                    </p>
+                    <a href="https://github.com/jasonpython50/chedito" class="btn btn-outline-primary btn-sm">
+                        View on GitHub
+                    </a>
+                </div>
+            </div>
+
+            <!-- Categories -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Categories</h5>
+                </div>
+                <ul class="list-group list-group-flush">
+                    {% for category in categories %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <a href="{% url 'blog:category_posts' category.slug %}">
+                            {{ category.name }}
+                        </a>
+                        <span class="badge bg-primary rounded-pill">
+                            {{ category.posts.count }}
+                        </span>
+                    </li>
+                    {% empty %}
+                    <li class="list-group-item text-muted">
+                        No categories yet
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <!-- Features -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Features to Try</h5>
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">Rich text editing</li>
+                    <li class="list-group-item">Image uploads (drag & drop)</li>
+                    <li class="list-group-item">Video embedding</li>
+                    <li class="list-group-item">Code blocks</li>
+                    <li class="list-group-item">Django Admin integration</li>
+                    <li class="list-group-item">Form field usage</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

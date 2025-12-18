@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% load chedito_tags %}
+
+{% block title %}Contact - Chedito Demo{% endblock %}
+
+{% block form_media_css %}{{ form.media.css }}{% endblock %}
+{% block form_media_js %}{{ form.media.js }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8">
+        <h1 class="mb-4">Contact Us</h1>
+
+        <p class="lead">
+            This form demonstrates using <code>RichTextFormField</code> in a regular Django form.
+        </p>
+
+        <div class="card">
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+
+                    {% if form.errors %}
+                    <div class="alert alert-danger">
+                        Please correct the errors below.
+                    </div>
+                    {% endif %}
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="id_name" class="form-label">Name</label>
+                            {{ form.name }}
+                            {% if form.name.errors %}
+                            <div class="text-danger">{{ form.name.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="id_email" class="form-label">Email</label>
+                            {{ form.email }}
+                            {% if form.email.errors %}
+                            <div class="text-danger">{{ form.email.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="id_subject" class="form-label">Subject</label>
+                        {{ form.subject }}
+                        {% if form.subject.errors %}
+                        <div class="text-danger">{{ form.subject.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="id_message" class="form-label">Message</label>
+                        {{ form.message }}
+                        {% if form.message.errors %}
+                        <div class="text-danger">{{ form.message.errors }}</div>
+                        {% endif %}
+                        <div class="form-text">
+                            You can use rich text formatting in your message.
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Send Message</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="sidebar">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">About This Demo</h5>
+                </div>
+                <div class="card-body">
+                    <p>
+                        This contact form shows how to use <code>RichTextFormField</code>
+                        in a standalone Django form (not a ModelForm).
+                    </p>
+                    <pre class="bg-light p-2 small"><code>from chedito.forms import RichTextFormField
+
+class ContactForm(forms.Form):
+    message = RichTextFormField()</code></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load chedito_tags %}
+
+{% block title %}Add Comment - {{ post.title }}{% endblock %}
+
+{% block form_media_css %}{{ form.media.css }}{% endblock %}
+{% block form_media_js %}{{ form.media.js }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <h1 class="mb-4">Add Comment</h1>
+
+        <p>Commenting on: <a href="{{ post.get_absolute_url }}">{{ post.title }}</a></p>
+
+        <div class="card">
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="id_author_name" class="form-label">Name</label>
+                            {{ form.author_name }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="id_author_email" class="form-label">Email</label>
+                            {{ form.author_email }}
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="id_body" class="form-label">Comment</label>
+                        {{ form.body }}
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">Submit Comment</button>
+                        <a href="{{ post.get_absolute_url }}" class="btn btn-outline-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

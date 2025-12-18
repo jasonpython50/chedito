@@ -1,0 +1,144 @@
+{% extends 'base.html' %}
+{% load chedito_tags %}
+
+{% block title %}{{ post.title }} - Chedito Demo{% endblock %}
+
+{% block form_media_css %}{{ comment_form.media.css }}{% endblock %}
+{% block form_media_js %}{{ comment_form.media.js }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8">
+        <article>
+            <!-- Post Header -->
+            <header class="mb-4">
+                {% if post.featured %}
+                <span class="badge bg-warning text-dark mb-2">Featured</span>
+                {% endif %}
+                <h1>{{ post.title }}</h1>
+                <p class="text-muted">
+                    {% if post.category %}
+                    <a href="{% url 'blog:category_posts' post.category.slug %}" class="badge bg-secondary text-decoration-none">
+                        {{ post.category.name }}
+                    </a>
+                    {% endif %}
+                    <span class="ms-2">Published {{ post.created|date:"F j, Y" }}</span>
+                    {% if post.updated != post.created %}
+                    <span class="ms-2">(Updated {{ post.updated|date:"F j, Y" }})</span>
+                    {% endif %}
+                </p>
+            </header>
+
+            <!-- Excerpt -->
+            {% if post.excerpt %}
+            <div class="lead mb-4 p-3 bg-light rounded">
+                {% render_rich_text post.excerpt %}
+            </div>
+            {% endif %}
+
+            <!-- Main Content -->
+            <div class="post-content">
+                {% render_rich_text post.content %}
+            </div>
+
+            <!-- Post Actions -->
+            <div class="mt-4 pt-3 border-top">
+                <a href="{% url 'blog:post_update' post.slug %}" class="btn btn-outline-primary">
+                    Edit Post
+                </a>
+                <a href="{% url 'blog:post_list' %}" class="btn btn-outline-secondary">
+                    Back to Posts
+                </a>
+            </div>
+        </article>
+
+        <!-- Comments Section -->
+        <section class="mt-5">
+            <h3>Comments ({{ comments.count }})</h3>
+
+            {% if comments %}
+            <div class="mt-4">
+                {% for comment in comments %}
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h6 class="card-subtitle mb-2 text-muted">
+                            {{ comment.author_name }} - {{ comment.created|date:"F j, Y g:i a" }}
+                        </h6>
+                        <div class="card-text">
+                            {% render_rich_text comment.body %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="text-muted">No comments yet. Be the first to comment!</p>
+            {% endif %}
+
+            <!-- Comment Form -->
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Leave a Comment</h5>
+                </div>
+                <div class="card-body">
+                    <form method="post" action="{% url 'blog:add_comment' post.slug %}">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="id_author_name" class="form-label">Name</label>
+                                {{ comment_form.author_name }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="id_author_email" class="form-label">Email</label>
+                                {{ comment_form.author_email }}
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="id_body" class="form-label">Comment</label>
+                            {{ comment_form.body }}
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit Comment</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="sidebar">
+            <!-- Post Info -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Post Info</h5>
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                        <strong>Status:</strong>
+                        <span class="badge bg-{{ post.status|yesno:'success,secondary' }}">
+                            {{ post.get_status_display }}
+                        </span>
+                    </li>
+                    <li class="list-group-item">
+                        <strong>Created:</strong> {{ post.created|date:"M j, Y" }}
+                    </li>
+                    <li class="list-group-item">
+                        <strong>Updated:</strong> {{ post.updated|date:"M j, Y" }}
+                    </li>
+                    <li class="list-group-item">
+                        <strong>Comments:</strong> {{ post.comments.count }}
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Admin Link -->
+            <div class="card">
+                <div class="card-body">
+                    <a href="{% url 'admin:blog_post_change' post.pk %}" class="btn btn-outline-secondary w-100">
+                        Edit in Admin
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

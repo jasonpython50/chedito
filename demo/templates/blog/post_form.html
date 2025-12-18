@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+{% load chedito_tags %}
+
+{% block title %}{% if form.instance.pk %}Edit{% else %}Create{% endif %} Post - Chedito Demo{% endblock %}
+
+{% block form_media_css %}{{ form.media.css }}{% endblock %}
+{% block form_media_js %}{{ form.media.js }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8">
+        <h1 class="mb-4">
+            {% if form.instance.pk %}Edit Post{% else %}Create New Post{% endif %}
+        </h1>
+
+        <div class="card">
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+
+                    {% if form.errors %}
+                    <div class="alert alert-danger">
+                        <h5>Please correct the errors below:</h5>
+                        {{ form.errors }}
+                    </div>
+                    {% endif %}
+
+                    <div class="mb-3">
+                        <label for="id_title" class="form-label">Title</label>
+                        {{ form.title }}
+                        {% if form.title.errors %}
+                        <div class="text-danger">{{ form.title.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="id_slug" class="form-label">Slug</label>
+                        {{ form.slug }}
+                        <div class="form-text">URL-friendly version of the title</div>
+                        {% if form.slug.errors %}
+                        <div class="text-danger">{{ form.slug.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="id_category" class="form-label">Category</label>
+                        {{ form.category }}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="id_excerpt" class="form-label">Excerpt</label>
+                        {{ form.excerpt }}
+                        <div class="form-text">Brief summary shown in post listings</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="id_content" class="form-label">Content</label>
+                        {{ form.content }}
+                        <div class="form-text">
+                            Main post content. Try uploading images, adding code blocks, etc.
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="id_status" class="form-label">Status</label>
+                            {{ form.status }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="form-check mt-4">
+                                {{ form.featured }}
+                                <label class="form-check-label" for="id_featured">
+                                    Featured Post
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            {% if form.instance.pk %}Update{% else %}Create{% endif %} Post
+                        </button>
+                        <a href="{% url 'blog:post_list' %}" class="btn btn-outline-secondary">
+                            Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="sidebar">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Editor Tips</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="mb-0">
+                        <li>Use the toolbar to format text</li>
+                        <li>Drag & drop images into the editor</li>
+                        <li>Paste images from clipboard</li>
+                        <li>Click the image icon to upload</li>
+                        <li>Use code blocks for code snippets</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Keyboard Shortcuts</h5>
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item"><kbd>Ctrl+B</kbd> Bold</li>
+                    <li class="list-group-item"><kbd>Ctrl+I</kbd> Italic</li>
+                    <li class="list-group-item"><kbd>Ctrl+U</kbd> Underline</li>
+                    <li class="list-group-item"><kbd>Ctrl+K</kbd> Link</li>
+                    <li class="list-group-item"><kbd>Ctrl+Z</kbd> Undo</li>
+                    <li class="list-group-item"><kbd>Ctrl+Y</kbd> Redo</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Auto-generate slug from title
+    document.getElementById('id_title').addEventListener('input', function() {
+        var slug = this.value
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/(^-|-$)/g, '');
+        document.getElementById('id_slug').value = slug;
+    });
+</script>
+{% endblock %}
